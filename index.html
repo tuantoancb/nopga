@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nộp giáo án online V4.0</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{
+  --blue:#1565e8;--green:#12a05c;--orange:#f59e0b;--ink:#13213c;--muted:#66758d;
+  --line:#dce5f1;--bg:#f4f7fb;--danger:#c92a3a
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI","Noto Sans","Roboto",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+.topbar{background:linear-gradient(110deg,#1636c9,#0b90e7);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 14px #16335a22}
+.brand{display:flex;gap:12px;align-items:center}.logo{font-size:38px}.brand h1{margin:0;font-size:26px}.brand small{display:block}
+.toolbar{display:flex;gap:10px}.toolbar button{border:1px solid #ffffff66;border-radius:9px;padding:10px 15px;font-weight:600;color:#fff;cursor:pointer}
+.btn-profile{background:#155fcf}.btn-store{background:#7857d8}.btn-login{background:#12a05c}
+.page{max-width:1480px;margin:18px auto;padding:0 18px}
+.status{display:flex;gap:10px;align-items:center;margin-bottom:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1}.dot.ok{background:#16a34a}
+.layout{display:grid;grid-template-columns:40% 60%;gap:16px}
+.panel{background:#fff;border:1px solid #e3eaf3;border-radius:14px;box-shadow:0 6px 22px #17335f0d;padding:18px}
+.title{display:flex;align-items:center;gap:9px}.title h2{font-size:20px;margin:0}.subtitle{font-size:14px;color:var(--muted);margin:4px 0 14px}
+.profile{border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:12px;display:grid;grid-template-columns:52px 1fr;gap:10px;position:relative}
+.profile.blue{border-color:#88b6ff;background:#f7fbff}.profile.green{border-color:#91d7aa;background:#fbfffc}.profile.orange{border-color:#f4c873;background:#fffdf8}
+.avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:21px;font-weight:700}
+.blue .avatar{background:#2878e8}.green .avatar{background:#18a54c}.orange .avatar{background:#f59e0b}
+.badge{font-weight:600;border-radius:10px;padding:4px 10px;display:inline-block;font-size:13px;margin-bottom:4px}
+.blue .badge{background:#dbeafe;color:#1d4ed8}.green .badge{background:#dcfce7;color:#15803d}.orange .badge{background:#fef3c7;color:#b45309}
+.pname{font-weight:600;margin-bottom:5px}.meta{font-size:14px;line-height:1.6;color:#334155}
+.pick{grid-column:1/-1;border:0;border-radius:8px;padding:9px;color:#fff;font-weight:600;cursor:pointer}
+.blue .pick{background:#1565e8}.green .pick{background:#16a34a}.orange .pick{background:#f59e0b}
+.left-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.outline,.danger{background:#fff;border-radius:8px;padding:10px;font-weight:600;cursor:pointer}
+.outline{border:1px solid #8db3ef;color:#1565e8}.danger{border:1px solid #f2a7ae;color:var(--danger);background:#fff7f8}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}.full{grid-column:1/-1}
+label{display:block;font-size:15px;font-weight:600;margin-bottom:7px}.req{color:#dc2626}
+input,select{width:100%;padding:11px 12px;border:1px solid #cdd9e8;border-radius:8px;font:inherit;background:#fff}
+.uploadbox{grid-column:1/-1;border:1px solid #9fd3ad;background:#f5fff7;border-radius:9px;padding:12px 14px}
+.fileline{display:flex;align-items:center;justify-content:space-between;gap:10px}.fileinfo{display:flex;align-items:center;gap:10px}.fileicon{font-size:30px}
+.choose{border:1px solid #9fbef0;background:#fff;color:#1565e8;border-radius:8px;padding:9px 14px;font-weight:600;cursor:pointer}
+.actions{display:grid;grid-template-columns:1.3fr 1fr .7fr;gap:12px;margin-top:16px}.actions button{padding:12px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
+.submit{background:#1565e8;color:#fff}.save{background:#16a34a;color:#fff}.reset{background:#fff;border:1px solid #ccd7e5!important;color:#27364f}
+.process{margin-top:16px;background:#fffaf0;border:1px solid #f7dfab;border-radius:13px;padding:15px 18px}.process h3{margin:0 0 12px;color:#be6500;font-size:17px}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.step{display:flex;gap:9px}.ico{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}
+.step:nth-child(1) .ico{background:#ede9fe}.step:nth-child(2) .ico{background:#dbeafe}.step:nth-child(3) .ico{background:#dcfce7}.step:nth-child(4) .ico{background:#ffedd5}.step:nth-child(5) .ico{background:#fce7f3}
+.step b{display:block;font-size:14px;margin-bottom:2px}.step span{font-size:13px;color:#59677c}
+.modal{display:none;position:fixed;inset:0;background:#0f172a88;z-index:20;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}
+.modalbox{background:#fff;border-radius:16px;width:min(720px,100%);max-height:92vh;overflow:auto;padding:22px;box-shadow:0 18px 55px #0003}
+.modalbox h2{margin-top:0}.modalgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modalgrid .full{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.modal-actions button{padding:10px 16px;border-radius:8px;font-weight:600;cursor:pointer}
+.primary{background:#1565e8;color:#fff;border:0}.secondary{background:#fff;border:1px solid #cdd9e8}.helper{font-size:13px;color:#64748b;margin-top:5px}
+.toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:#fff;padding:12px 15px;border-radius:10px;display:none;z-index:30;max-width:360px}.toast.show{display:block}
+@media(max-width:980px){.layout{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.toolbar{flex-wrap:wrap}.modalgrid{grid-template-columns:1fr}}
+@media(max-width:640px){.formgrid,.actions,.left-actions{grid-template-columns:1fr}.steps{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">📝</div><div><h1>NỘP GIÁO ÁN ONLINE V4.0</h1><small>Đăng nhập Google • Lưu Drive • Ghi Google Sheet</small></div></div>
+  <div class="toolbar">
+    <button class="btn-profile" onclick="openProfileEditor()">👤 Hồ sơ</button>
+    <button class="btn-store" onclick="openStorage()">⚙️ Nơi lưu</button>
+    <button class="btn-login" id="loginBtn" onclick="loginGoogle()">🔐 Đăng nhập Google</button>
+  </div>
+</header>
+
+<main class="page">
+  <div class="status">
+    <span class="dot" id="authDot"></span><b id="authText">Chưa đăng nhập Google</b>
+    <span style="margin-left:auto;color:#64748b" id="storageText">Chưa cấu hình nơi lưu</span>
+  </div>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="title"><span style="font-size:24px">👥</span><h2>CHỌN HỒ SƠ NHANH</h2></div>
+      <div class="subtitle">Ba hồ sơ cùng dùng chung Google Sheet và thư mục Drive của người đang sử dụng</div>
+      <div id="profiles"></div>
+      <div class="left-actions">
+        <button class="outline" onclick="openProfileEditor()">＋ Tạo / sửa hồ sơ</button>
+        <button class="danger" onclick="clearCurrentProfile()">🗑 Xóa hồ sơ đang chọn</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="title"><span style="font-size:24px">📘</span><h2>THÔNG TIN NỘP GIÁO ÁN</h2></div>
+      <div class="subtitle">Nhập thông tin, chọn file Word và bấm Nộp giáo án</div>
+
+      <div class="formgrid">
+        <div><label>Họ và tên <span class="req">*</span></label><input id="name"></div>
+        <div><label>Môn/HĐGD <span class="req">*</span></label><input id="subject"></div>
+        <div><label>Tổ chuyên môn <span class="req">*</span></label><input id="team"></div>
+        <div><label>Ngày/tháng/năm <span class="req">*</span></label><input id="date" type="date"></div>
+        <div class="full"><label>Tên bài học/chuyên đề/nội dung <span class="req">*</span></label><input id="lesson"></div>
+        <div><label>Lớp <span class="req">*</span></label><input id="className"></div>
+        <div><label>Số tiết <span class="req">*</span></label><input id="periods"></div>
+        <div class="full"><label>Từ tiết đến tiết (a-b) <span class="req">*</span></label><input id="range"></div>
+        <div class="full"><label>Tên người duyệt <span class="req">*</span></label><input id="approver"></div>
+
+        <div class="uploadbox">
+          <label style="color:#12712c">File giáo án Word <span class="req">*</span></label>
+          <div class="fileline">
+            <div class="fileinfo"><div class="fileicon">📄</div><div><b id="fileName">Chưa chọn file</b><br><small>.doc hoặc .docx</small></div></div>
+            <label class="choose">⬆ Chọn file<input id="fileInput" type="file" accept=".doc,.docx" hidden></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="submit" id="submitBtn" onclick="submitLesson()">🚀 Nộp giáo án</button>
+        <button class="save" onclick="saveDraft()">💾 Lưu nháp bài dạy</button>
+        <button class="reset" onclick="resetLesson()">↻ Làm mới</button>
+      </div>
+    </section>
+  </div>
+
+  <section class="process">
+    <h3>QUY TRÌNH NỘP GIÁO ÁN</h3>
+    <div class="steps">
+      <div class="step"><div class="ico">🔐</div><div><b>1. Đăng nhập</b><span>Đăng nhập tài khoản Google của người dùng.</span></div></div>
+      <div class="step"><div class="ico">⚙️</div><div><b>2. Cài nơi lưu</b><span>Chọn 1 Sheet và 1 thư mục Drive dùng chung cho 3 hồ sơ.</span></div></div>
+      <div class="step"><div class="ico">👤</div><div><b>3. Chọn hồ sơ</b><span>Nháy hồ sơ để tự điền giáo viên, môn, tổ, lớp, người duyệt.</span></div></div>
+      <div class="step"><div class="ico">📄</div><div><b>4. Chọn file Word</b><span>File được tải thật lên thư mục Drive đã cấu hình.</span></div></div>
+      <div class="step"><div class="ico">✅</div><div><b>5. Nộp giáo án</b><span>App tải file lên Drive và thêm một dòng vào Google Sheet.</span></div></div>
+    </div>
+  </section>
+</main>
+
+<!-- Storage modal -->
+<div class="modal" id="storageModal">
+  <div class="modalbox">
+    <h2>⚙️ Cài đặt nơi lưu</h2>
+    <p>Mỗi người dùng thiết lập một lần. Ba hồ sơ nhanh đều dùng chung cấu hình này.</p>
+    <div class="modalgrid">
+      <div class="full">
+        <label>Google OAuth Client ID <span class="req">*</span></label>
+        <input id="clientId" placeholder="...apps.googleusercontent.com">
+        <div class="helper">Client ID này do người quản trị app tạo một lần trên Google Cloud. Các giáo viên không cần đổi nếu dùng chung app.</div>
+      </div>
+      <div class="full">
+        <label>Link Google Sheet đích <span class="req">*</span></label>
+        <input id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../edit">
+      </div>
+      <div>
+        <label>Tên trang tính</label>
+        <input id="sheetName" value="Câu trả lời biểu mẫu 1">
+      </div>
+      <div>
+        <label>Dòng bắt đầu</label>
+        <input value="App sẽ tự thêm xuống cuối" disabled>
+      </div>
+      <div class="full">
+        <label>Link thư mục Google Drive <span class="req">*</span></label>
+        <input id="folderUrl" placeholder="https://drive.google.com/drive/folders/...">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeStorage()">Đóng</button>
+      <button class="primary" onclick="saveStorage()">💾 Lưu cấu hình</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile modal -->
+<div class="modal" id="profileModal">
+  <div class="modalbox">
+    <h2>👤 Thiết lập hồ sơ nhanh</h2>
+    <div class="modalgrid">
+      <div>
+        <label>Chọn vị trí hồ sơ</label>
+        <select id="profileSlot" onchange="loadProfileEditor()">
+          <option value="0">Hồ sơ 1</option><option value="1">Hồ sơ 2</option><option value="2">Hồ sơ 3</option>
+        </select>
+      </div>
+      <div><label>Tên hồ sơ</label><input id="p_title" placeholder="Ví dụ: Toán 10A1"></div>
+      <div><label>Họ và tên</label><input id="p_name"></div>
+      <div><label>Môn/HĐGD</label><input id="p_subject"></div>
+      <div><label>Tổ chuyên môn</label><input id="p_team"></div>
+      <div><label>Lớp</label><input id="p_class"></div>
+      <div class="full"><label>Tên người duyệt</label><input id="p_approver"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeProfileEditor()">Đóng</button>
+      <button class="primary" onclick="saveProfile()">💾 Lưu hồ sơ</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+let accessToken='';
+let tokenClient=null;
+let selectedProfile=0;
+
+function toast(msg, ms=3200){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),ms)}
+function today(){return new Date().toISOString().slice(0,10)}
+$('date').value=today();
+
+function defaults(){return [
+ {title:'Hồ sơ 1',name:'',subject:'',team:'',className:'',approver:''},
+ {title:'Hồ sơ 2',name:'',subject:'',team:'',className:'',approver:''},
+ {title:'Hồ sơ 3',name:'',subject:'',team:'',className:'',approver:''}
+]}
+function getProfiles(){try{let p=JSON.parse(localStorage.getItem('ga_v4_profiles')||'null');if(Array.isArray(p)){while(p.length<3)p.push(defaults()[p.length]);return p.slice(0,3)}}catch(e){}return defaults()}
+function setProfiles(p){localStorage.setItem('ga_v4_profiles',JSON.stringify(p))}
+function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function renderProfiles(){
+ const colors=['blue','green','orange'];
+ $('profiles').innerHTML=getProfiles().map((x,i)=>`
+ <div class="profile ${colors[i]}">
+   <div class="avatar">${i+1}</div>
+   <div><div class="badge">${esc(x.title||('Hồ sơ '+(i+1)))}</div>
+   <div class="pname">${esc(x.name)||'Chưa nhập giáo viên'}</div>
+   <div class="meta">📘 Môn: <b>${esc(x.subject)||'-'}</b><br>👥 Tổ: <b>${esc(x.team)||'-'}</b> &nbsp; 🎓 Lớp: <b>${esc(x.className)||'-'}</b><br>👤 Duyệt: <b>${esc(x.approver)||'-'}</b></div></div>
+   <button class="pick" onclick="useProfile(${i})">✓ Chọn hồ sơ này</button>
+ </div>`).join('')
+}
+function useProfile(i){selectedProfile=i;const x=getProfiles()[i];$('name').value=x.name||'';$('subject').value=x.subject||'';$('team').value=x.team||'';$('className').value=x.className||'';$('approver').value=x.approver||''}
+
+function openProfileEditor(){$('profileSlot').value=selectedProfile;loadProfileEditor();$('profileModal').classList.add('show')}
+function closeProfileEditor(){$('profileModal').classList.remove('show')}
+function loadProfileEditor(){const i=Number($('profileSlot').value);selectedProfile=i;const x=getProfiles()[i];$('p_title').value=x.title||'';$('p_name').value=x.name||'';$('p_subject').value=x.subject||'';$('p_team').value=x.team||'';$('p_class').value=x.className||'';$('p_approver').value=x.approver||''}
+function saveProfile(){const i=Number($('profileSlot').value);const p=getProfiles();p[i]={title:$('p_title').value||('Hồ sơ '+(i+1)),name:$('p_name').value,subject:$('p_subject').value,team:$('p_team').value,className:$('p_class').value,approver:$('p_approver').value};setProfiles(p);selectedProfile=i;renderProfiles();useProfile(i);closeProfileEditor();toast('Đã lưu hồ sơ '+(i+1))}
+function clearCurrentProfile(){if(!confirm('Xóa nội dung Hồ sơ '+(selectedProfile+1)+'?'))return;const p=getProfiles();p[selectedProfile]=defaults()[selectedProfile];setProfiles(p);renderProfiles();useProfile(selectedProfile)}
+
+function storage(){try{return JSON.parse(localStorage.getItem('ga_v4_storage')||'{}')}catch(e){return {}}}
+function openStorage(){const s=storage();$('clientId').value=s.clientId||'';$('sheetUrl').value=s.sheetUrl||'';$('sheetName').value=s.sheetName||'Câu trả lời biểu mẫu 1';$('folderUrl').value=s.folderUrl||'';$('storageModal').classList.add('show')}
+function closeStorage(){$('storageModal').classList.remove('show')}
+function extractSheetId(url){const m=(url||'').match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);return m?m[1]:''}
+function extractFolderId(url){const m=(url||'').match(/\/folders\/([a-zA-Z0-9-_]+)/);return m?m[1]:''}
+function saveStorage(){
+ const clientId=$('clientId').value.trim(),sheetUrl=$('sheetUrl').value.trim(),folderUrl=$('folderUrl').value.trim(),sheetName=$('sheetName').value.trim()||'Câu trả lời biểu mẫu 1';
+ if(!clientId||!extractSheetId(sheetUrl)||!extractFolderId(folderUrl)){alert('Vui lòng nhập đúng Client ID, link Google Sheet và link thư mục Drive.');return}
+ localStorage.setItem('ga_v4_storage',JSON.stringify({clientId,sheetUrl,folderUrl,sheetName}));
+ closeStorage();updateStorageStatus();initTokenClient();toast('Đã lưu cấu hình nơi lưu')
+}
+function updateStorageStatus(){const s=storage();$('storageText').textContent=(extractSheetId(s.sheetUrl)&&extractFolderId(s.folderUrl))?'✓ Đã cấu hình Sheet + Drive':'Chưa cấu hình nơi lưu'}
+
+function initTokenClient(){
+ const s=storage();if(!s.clientId||!window.google?.accounts?.oauth2)return;
+ tokenClient=google.accounts.oauth2.initTokenClient({
+   client_id:s.clientId,
+   scope:'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets',
+   callback:(resp)=>{
+     if(resp.error){toast('Đăng nhập thất bại: '+resp.error);return}
+     accessToken=resp.access_token;$('authDot').classList.add('ok');$('authText').textContent='Đã đăng nhập Google';$('loginBtn').textContent='✓ Đã đăng nhập';toast('Đăng nhập Google thành công')
+   }
+ })
+}
+function loginGoogle(){
+ const s=storage();if(!s.clientId){openStorage();toast('Hãy nhập Google OAuth Client ID trước');return}
+ if(!tokenClient)initTokenClient();
+ if(!tokenClient){toast('Google Identity chưa tải xong, thử lại sau vài giây');return}
+ tokenClient.requestAccessToken({prompt:accessToken?'':'consent'})
+}
+
+$('fileInput').addEventListener('change',e=>{$('fileName').textContent=e.target.files[0]?.name||'Chưa chọn file'});
+
+function saveDraft(){const d={lesson:$('lesson').value,periods:$('periods').value,range:$('range').value,date:$('date').value};localStorage.setItem('ga_v4_draft',JSON.stringify(d));toast('Đã lưu nháp bài dạy')}
+function loadDraft(){try{const d=JSON.parse(localStorage.getItem('ga_v4_draft')||'{}');if(d.lesson)$('lesson').value=d.lesson;if(d.periods)$('periods').value=d.periods;if(d.range)$('range').value=d.range;if(d.date)$('date').value=d.date}catch(e){}}
+function resetLesson(){$('lesson').value='';$('periods').value='';$('range').value='';$('date').value=today();$('fileInput').value='';$('fileName').textContent='Chưa chọn file'}
+
+async function uploadToDrive(file, folderId){
+ const metadata={name:file.name,parents:[folderId]};
+ const boundary='-------314159265358979323846';
+ const delimiter='\r\n--'+boundary+'\r\n';
+ const close_delim='\r\n--'+boundary+'--';
+ const reader=new FileReader();
+ const base64=await new Promise((resolve,reject)=>{reader.onload=()=>resolve(reader.result.split(',')[1]);reader.onerror=reject;reader.readAsDataURL(file)});
+ const body=delimiter+'Content-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(metadata)+delimiter+
+   'Content-Type: '+(file.type||'application/vnd.openxmlformats-officedocument.wordprocessingml.document')+'\r\nContent-Transfer-Encoding: base64\r\n\r\n'+base64+close_delim;
+ const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',{
+   method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'multipart/related; boundary="'+boundary+'"'},body
+ });
+ if(!r.ok)throw new Error('Upload Drive thất bại: '+await r.text());
+ const data=await r.json();
+ if(!data.webViewLink)data.webViewLink='https://drive.google.com/file/d/'+data.id+'/view';
+ return data;
+}
+
+async function appendSheet(sheetId,sheetName,values){
+ const range=encodeURIComponent(`'${sheetName}'!A:Z`);
+ const url=`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+ const r=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify({values:[values]})});
+ if(!r.ok)throw new Error('Ghi Google Sheet thất bại: '+await r.text());
+ return r.json();
+}
+
+async function submitLesson(){
+ const s=storage(),sheetId=extractSheetId(s.sheetUrl),folderId=extractFolderId(s.folderUrl),file=$('fileInput').files[0];
+ if(!sheetId||!folderId){openStorage();toast('Chưa cấu hình nơi lưu');return}
+ if(!accessToken){loginGoogle();toast('Hãy đăng nhập Google rồi bấm Nộp lại');return}
+ const ids=['name','subject','team','date','lesson','className','periods','range','approver'];
+ if(ids.some(id=>!$(id).value.trim())){alert('Vui lòng nhập đủ các mục bắt buộc.');return}
+ if(!file){alert('Vui lòng chọn file Word giáo án.');return}
+ if(!/\.(doc|docx)$/i.test(file.name)){alert('Chỉ nhận file .doc hoặc .docx');return}
+ const btn=$('submitBtn');btn.disabled=true;btn.textContent='⏳ Đang nộp...';
+ try{
+   const drive=await uploadToDrive(file,folderId);
+   const timestamp=new Date().toLocaleString('vi-VN');
+   // Column order designed to match the existing response sheet as closely as possible.
+   const row=[
+     timestamp,
+     $('name').value,
+     $('subject').value,
+     $('team').value,
+     $('date').value,
+     $('lesson').value,
+     $('className').value,
+     $('periods').value,
+     $('range').value,
+     drive.webViewLink,
+     $('approver').value,
+     'Chờ duyệt'
+   ];
+   await appendSheet(sheetId,s.sheetName||'Câu trả lời biểu mẫu 1',row);
+   toast('✅ Nộp giáo án thành công: file đã lên Drive và dữ liệu đã ghi vào Sheet',5000);
+   resetLesson();
+ }catch(err){
+   console.error(err);alert(err.message+'\n\nNếu lỗi quyền truy cập, hãy đăng nhập lại và đảm bảo tài khoản có quyền với Sheet/Drive đã cấu hình.');
+ }finally{btn.disabled=false;btn.textContent='🚀 Nộp giáo án'}
+}
+
+renderProfiles();loadDraft();updateStorageStatus();
+window.addEventListener('load',()=>setTimeout(initTokenClient,600));
+</script>
+</body>
+</html>

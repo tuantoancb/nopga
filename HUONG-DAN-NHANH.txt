@@ -1,0 +1,11 @@
+THIẾT LẬP NHANH V4.0
+
+1) Upload index.html + vercel.json lên repo GitHub đang nối Vercel.
+2) Deploy Vercel.
+3) Tạo Google OAuth Web Client ID trên Google Cloud.
+4) Enable Google Drive API + Google Sheets API.
+5) Authorized JavaScript origin = link https://...vercel.app của app.
+6) Trong app: ⚙ Nơi lưu > nhập Client ID + link Sheet + link folder Drive.
+7) Đăng nhập Google.
+8) Tạo 3 hồ sơ.
+9) Chọn hồ sơ > nhập bài > chọn file Word > Nộp giáo án.
