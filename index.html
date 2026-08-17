@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nộp giáo án online V4.0</title>
+<title>Nộp giáo án online V4.2</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="config.js"></script>
 <style>
 :root{
   --blue:#1565e8;--green:#12a05c;--orange:#f59e0b;--ink:#13213c;--muted:#66758d;
@@ -56,7 +57,7 @@ input,select{width:100%;padding:11px 12px;border:1px solid #cdd9e8;border-radius
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><div class="logo">📝</div><div><h1>NỘP GIÁO ÁN ONLINE V4.0</h1><small>Đăng nhập Google • Lưu Drive • Ghi Google Sheet</small></div></div>
+  <div class="brand"><div class="logo">📝</div><div><h1>NỘP GIÁO ÁN ONLINE V4.2</h1><small>Đăng nhập Google • Lưu Drive • Ghi Google Sheet</small></div></div>
   <div class="toolbar">
     <button class="btn-profile" onclick="openProfileEditor()">👤 Hồ sơ</button>
     <button class="btn-store" onclick="openStorage()">⚙️ Nơi lưu</button>
@@ -129,24 +130,11 @@ input,select{width:100%;padding:11px 12px;border:1px solid #cdd9e8;border-radius
 <div class="modal" id="storageModal">
   <div class="modalbox">
     <h2>⚙️ Cài đặt nơi lưu</h2>
-    <p>Mỗi người dùng thiết lập một lần. Ba hồ sơ nhanh đều dùng chung cấu hình này.</p>
+    <p>Mỗi người dùng chỉ cần chọn Google Sheet và thư mục Google Drive của mình. Ba hồ sơ nhanh đều dùng chung nơi lưu này.</p>
     <div class="modalgrid">
-      <div class="full">
-        <label>Google OAuth Client ID <span class="req">*</span></label>
-        <input id="clientId" placeholder="...apps.googleusercontent.com">
-        <div class="helper">Client ID này do người quản trị app tạo một lần trên Google Cloud. Các giáo viên không cần đổi nếu dùng chung app.</div>
-      </div>
       <div class="full">
         <label>Link Google Sheet đích <span class="req">*</span></label>
         <input id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../edit">
-      </div>
-      <div>
-        <label>Tên trang tính</label>
-        <input id="sheetName" value="Câu trả lời biểu mẫu 1">
-      </div>
-      <div>
-        <label>Dòng bắt đầu</label>
-        <input value="App sẽ tự thêm xuống cuối" disabled>
       </div>
       <div class="full">
         <label>Link thư mục Google Drive <span class="req">*</span></label>
@@ -225,22 +213,23 @@ function saveProfile(){const i=Number($('profileSlot').value);const p=getProfile
 function clearCurrentProfile(){if(!confirm('Xóa nội dung Hồ sơ '+(selectedProfile+1)+'?'))return;const p=getProfiles();p[selectedProfile]=defaults()[selectedProfile];setProfiles(p);renderProfiles();useProfile(selectedProfile)}
 
 function storage(){try{return JSON.parse(localStorage.getItem('ga_v4_storage')||'{}')}catch(e){return {}}}
-function openStorage(){const s=storage();$('clientId').value=s.clientId||'';$('sheetUrl').value=s.sheetUrl||'';$('sheetName').value=s.sheetName||'Câu trả lời biểu mẫu 1';$('folderUrl').value=s.folderUrl||'';$('storageModal').classList.add('show')}
+function openStorage(){const s=storage();$('sheetUrl').value=s.sheetUrl||'';$('folderUrl').value=s.folderUrl||'';$('storageModal').classList.add('show')}
 function closeStorage(){$('storageModal').classList.remove('show')}
 function extractSheetId(url){const m=(url||'').match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);return m?m[1]:''}
 function extractFolderId(url){const m=(url||'').match(/\/folders\/([a-zA-Z0-9-_]+)/);return m?m[1]:''}
 function saveStorage(){
- const clientId=$('clientId').value.trim(),sheetUrl=$('sheetUrl').value.trim(),folderUrl=$('folderUrl').value.trim(),sheetName=$('sheetName').value.trim()||'Câu trả lời biểu mẫu 1';
- if(!clientId||!extractSheetId(sheetUrl)||!extractFolderId(folderUrl)){alert('Vui lòng nhập đúng Client ID, link Google Sheet và link thư mục Drive.');return}
- localStorage.setItem('ga_v4_storage',JSON.stringify({clientId,sheetUrl,folderUrl,sheetName}));
- closeStorage();updateStorageStatus();initTokenClient();toast('Đã lưu cấu hình nơi lưu')
+ const sheetUrl=$('sheetUrl').value.trim(),folderUrl=$('folderUrl').value.trim();
+ if(!extractSheetId(sheetUrl)||!extractFolderId(folderUrl)){alert('Vui lòng nhập đúng link Google Sheet và link thư mục Drive.');return}
+ localStorage.setItem('ga_v4_storage',JSON.stringify({sheetUrl,folderUrl}));
+ closeStorage();updateStorageStatus();toast('Đã lưu nơi lưu dữ liệu')
 }
 function updateStorageStatus(){const s=storage();$('storageText').textContent=(extractSheetId(s.sheetUrl)&&extractFolderId(s.folderUrl))?'✓ Đã cấu hình Sheet + Drive':'Chưa cấu hình nơi lưu'}
 
 function initTokenClient(){
- const s=storage();if(!s.clientId||!window.google?.accounts?.oauth2)return;
+ const clientId=(window.APP_CONFIG&&APP_CONFIG.GOOGLE_CLIENT_ID)||'';
+ if(!clientId||clientId.includes('DAN_CLIENT_ID')||!window.google?.accounts?.oauth2)return;
  tokenClient=google.accounts.oauth2.initTokenClient({
-   client_id:s.clientId,
+   client_id:clientId,
    scope:'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets',
    callback:(resp)=>{
      if(resp.error){toast('Đăng nhập thất bại: '+resp.error);return}
@@ -249,7 +238,8 @@ function initTokenClient(){
  })
 }
 function loginGoogle(){
- const s=storage();if(!s.clientId){openStorage();toast('Hãy nhập Google OAuth Client ID trước');return}
+ const clientId=(window.APP_CONFIG&&APP_CONFIG.GOOGLE_CLIENT_ID)||'';
+ if(!clientId||clientId.includes('DAN_CLIENT_ID')){alert('App chưa được quản trị viên cấu hình Google OAuth Client ID. Hãy điền Client ID một lần trong file config.js trước khi deploy.');return}
  if(!tokenClient)initTokenClient();
  if(!tokenClient){toast('Google Identity chưa tải xong, thử lại sau vài giây');return}
  tokenClient.requestAccessToken({prompt:accessToken?'':'consent'})
@@ -314,7 +304,7 @@ async function submitLesson(){
      $('approver').value,
      'Chờ duyệt'
    ];
-   await appendSheet(sheetId,s.sheetName||'Câu trả lời biểu mẫu 1',row);
+   await appendSheet(sheetId,'Câu trả lời biểu mẫu 1',row);
    toast('✅ Nộp giáo án thành công: file đã lên Drive và dữ liệu đã ghi vào Sheet',5000);
    resetLesson();
  }catch(err){
